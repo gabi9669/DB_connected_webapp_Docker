@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+  db:
+    image: postgres:11
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    - ./chinook_data.sql:/docker-entrypoint-initdb.d/chinook_data.sql
+    environment:
+     - POSTGRES_USER=vagrant
+     - POSTGRES_PASSWORD=vagrant
+     - POSTGRES_DB=chinook
+  web:
+    depends_on:
+      - db
+    build: .
+    image: tomcatweb:v1
+    environment:
+     - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/chinook
+     - SPRING_DATASOURCE_USERNAME=vagrant
+     - SPRING_DATASOURCE_PASSWORD=vagrant
+    ports:
+      - "8080:8080"
+
+volumes:
+    db_data:
